@@ -1,7 +1,22 @@
 services:
+    user_model:
+        class: AppBundle\Model\User
+        arguments: ["@event_dispatcher"]
+
     user_repository:
-        class: AppBundle\Model\UserRepository
-    stats_system:
+        class: AppBundle\Repository\UserRepository
+
+    app_event_dispatcher:
+        class: Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher
+        arguments:
+            - @service_container
+
+    stats_system_listener:
         class: AppBundle\Service\StatsSystem
-    marketing_system:
+        tags:
+            - { name: kernel.event_listener, event: event.update.user.email, method: postRequest }
+
+    marketing_system_listener:
         class: AppBundle\Service\MarketingSystem
+        tags:
+            - { name: kernel.event_listener, event: event.update.user.email, method: postRequest }

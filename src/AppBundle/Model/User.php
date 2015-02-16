@@ -1,15 +1,29 @@
 <?php
 
-namespace App\Model;
+namespace AppBundle\Model;
 
+use AppBundle\Entity\User as UserEntity;
+use AppBundle\Event\User as UserEvent;
+use AppBundle\Service\MarketingSystem;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+/**
+ * Class User
+ * @package App\Model
+ */
 class User
 {
-	protected $id, $name, $email;
+    protected $dispatcher;
 
-	function __construct($id, $name, $email)
-	{
-		$this->id    = $id;
-		$this->name  = $name;
-		$this->email = $email;
-	}
+    public function __construct(EventDispatcherInterface $dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
+    }
+
+    public function changeEmail(UserEntity $user, $email)
+    {
+        $this->dispatcher->dispatch(UserEvent::NAME);
+
+        $user->setEmail($email);
+    }
 }
